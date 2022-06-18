@@ -230,7 +230,8 @@ module Sidekiq
             # set new keys, delete expired keys
             del, set = cache.partition { |k, v| v.nil? }
             c.hmset(cache_key, *set.flatten) if set.any?
-            c.hdel(cache_key, *del.map(&:first)) if del.any?
+            #c.hdel(cache_key, *del.map(&:first)) if del.any?
+            del.each {|dk| c.hdel(cache_key, dk.first)} if del.any?
 
             if attrs[:history_at]
               # set a dyno count history marker
